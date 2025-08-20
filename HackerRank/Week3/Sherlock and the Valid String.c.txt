@@ -1,0 +1,114 @@
+#include <assert.h>
+#include <ctype.h>
+#include <limits.h>
+#include <math.h>
+#include <stdbool.h>
+#include <stddef.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char* readline();
+
+char* isValid(char* s) {
+    int c[26]={0};
+    int length=strlen(s);
+    for(int a=0;a<length;a++){
+        c[s[a] - 'a']++;
+    }
+    int f[length],fsize=0;
+    for(int a=0;a<26;a++){
+        if(c[a]>0){
+            f[fsize++]=c[a];
+        }
+    }
+    int mini=f[0],maxi=f[0];
+    for(int a=1;a<fsize;a++){
+        if(f[a]<mini)mini=f[a];
+        if(f[a]>maxi)maxi=f[a];
+    }
+    int min_c=0,max_c=0;
+    for(int a=0;a<fsize;a++){
+        if(f[a]==mini)min_c++;
+        if (f[a]==maxi)max_c++;
+    }
+    if(mini==maxi){
+         return "YES";
+    }
+    if(mini == 1 && min_c ==1 && max_c+min_c==fsize) {
+        return "YES";
+    }
+    if(maxi - mini == 1 && max_c == 1 && min_c+max_c==fsize) {
+        return "YES";
+    }
+    return "NO";
+
+}
+
+int main()
+{
+    FILE* fptr = fopen(getenv("OUTPUT_PATH"), "w");
+
+    char* s = readline();
+
+    char* result = isValid(s);
+
+    fprintf(fptr, "%s\n", result);
+
+    fclose(fptr);
+
+    return 0;
+}
+
+char* readline() {
+    size_t alloc_length = 1024;
+    size_t data_length = 0;
+
+    char* data = malloc(alloc_length);
+
+    while (true) {
+        char* cursor = data + data_length;
+        char* line = fgets(cursor, alloc_length - data_length, stdin);
+
+        if (!line) {
+            break;
+        }
+
+        data_length += strlen(cursor);
+
+        if (data_length < alloc_length - 1 || data[data_length - 1] == '\n') {
+            break;
+        }
+
+        alloc_length <<= 1;
+
+        data = realloc(data, alloc_length);
+
+        if (!data) {
+            data = '\0';
+
+            break;
+        }
+    }
+
+    if (data[data_length - 1] == '\n') {
+        data[data_length - 1] = '\0';
+
+        data = realloc(data, data_length);
+
+        if (!data) {
+            data = '\0';
+        }
+    } else {
+        data = realloc(data, data_length + 1);
+
+        if (!data) {
+            data = '\0';
+        } else {
+            data[data_length] = '\0';
+        }
+    }
+
+    return data;
+}
